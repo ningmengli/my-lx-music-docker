@@ -2,6 +2,11 @@ name: 构建洛雪音乐Docker镜像
 on:
   workflow_dispatch:
 
+# 关键：授予创建Release、Tag必须的写入权限
+permissions:
+  contents: write
+  releases: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +23,7 @@ jobs:
       - name: 导出为tar离线包
         run: docker save -o lx-music-desktop-amd64.tar local/lx-music-desktop:latest
 
-      # 保留临时产物备份
+      # 临时产物备份
       - name: 上传构建临时产物
         uses: actions/upload-artifact@v4
         with:
@@ -26,7 +31,7 @@ jobs:
           path: lx-music-desktop-amd64.tar
           retention-days: 30
 
-      # 自动上传到Release，支持国内加速下载
+      # 发布到Release（修正参数名：overwrite → overwrite_files）
       - name: 发布镜像到Release
         uses: softprops/action-gh-release@v2
         with:
@@ -34,6 +39,6 @@ jobs:
           name: LX-Music-Docker v1.0.0
           body: 洛雪音乐Ubuntu22.04 noVNC离线Docker镜像 amd64架构
           files: lx-music-desktop-amd64.tar
-          overwrite: true
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
