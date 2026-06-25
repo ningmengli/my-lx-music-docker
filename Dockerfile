@@ -32,8 +32,9 @@ RUN wget --tries=3 --timeout=30 -O /tmp/lx-music.deb \
 RUN mkdir -p /root/.vnc \
     && x11vnc -storepasswd 123456 /root/.vnc/passwd
 
-# 开机自启洛雪音乐
-RUN echo "lx-music-desktop --no-sandbox &" >> /root/.config/lxsession/LXDE/autostart
+# 先创建自启目录，再写入开机自启配置
+RUN mkdir -p /root/.config/lxsession/LXDE \
+    && echo "lx-music-desktop --no-sandbox &" >> /root/.config/lxsession/LXDE/autostart
 
 # 开放网页访问端口
 EXPOSE 6080
