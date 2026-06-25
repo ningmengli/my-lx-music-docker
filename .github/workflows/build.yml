@@ -2,10 +2,9 @@ name: 构建洛雪音乐Docker镜像
 on:
   workflow_dispatch:
 
-# 关键：授予创建Release、Tag必须的写入权限
+# 仅保留合法权限配置，去掉无效的 releases: write
 permissions:
   contents: write
-  releases: write
 
 jobs:
   build:
@@ -31,7 +30,7 @@ jobs:
           path: lx-music-desktop-amd64.tar
           retention-days: 30
 
-      # 发布到Release（修正参数名：overwrite → overwrite_files）
+      # 发布到Release，参数已修正为 overwrite_files
       - name: 发布镜像到Release
         uses: softprops/action-gh-release@v2
         with:
