@@ -1,0 +1,26 @@
+name: 构建洛雪音乐Docker镜像
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v5
+
+      - name: 设置Docker构建环境
+        uses: docker/setup-buildx-action@v3
+
+      - name: 构建Docker镜像
+        run: docker build -t local/lx-music-desktop:latest .
+
+      - name: 导出为tar离线包
+        run: docker save -o lx-music-desktop-amd64.tar local/lx-music-desktop:latest
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: lx-music-desktop-amd64-tar
+          path: lx-music-desktop-amd64.tar
+          retention-days: 15
