@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: 设置Docker构建环境
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3.7.1
 
       - name: 构建Docker镜像
         run: docker build -t local/lx-music-desktop:latest .
@@ -19,7 +19,7 @@ jobs:
         run: docker save -o lx-music-desktop-amd64.tar local/lx-music-desktop:latest
 
       - name: 上传构建产物
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: lx-music-desktop-amd64-tar
           path: lx-music-desktop-amd64.tar
