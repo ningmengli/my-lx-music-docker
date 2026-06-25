@@ -1,7 +1,11 @@
-# 更换为 Ubuntu 22.04 基础镜像，软件源正常，仍在长期支持期
-FROM dorowu/ubuntu-desktop-lxde-vnc:jammy
+# 使用确定存在的 Ubuntu 20.04 基础镜像
+FROM dorowu/ubuntu-desktop-lxde-vnc:focal
 
 LABEL description="LX Music Desktop noVNC Docker"
+
+# 修复：替换为官方旧版归档源，解决 Ubuntu 20.04 软件源下架问题
+RUN sed -i 's/archive.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list \
+    && sed -i 's/security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
 
 # 安装运行依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -14,7 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libasound2 \
     && rm -rf /var/lib/apt/lists/*
 
-# 下载安装洛雪音乐桌面版 v2.12.2，增加重试机制避免网络波动
+# 下载安装洛雪音乐，增加重试机制避免网络波动
 RUN wget --tries=3 --timeout=30 -O /tmp/lx-music.deb \
     "https://github.com/lyswhut/lx-music-desktop/releases/download/v2.12.2/lx-music-desktop_2.12.2_amd64.deb" \
     && dpkg -i /tmp/lx-music.deb \
