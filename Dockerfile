@@ -1,11 +1,14 @@
-# 使用确定存在的 Ubuntu 20.04 基础镜像
 FROM dorowu/ubuntu-desktop-lxde-vnc:focal
 
 LABEL description="LX Music Desktop noVNC Docker"
 
-# 修复：替换为官方旧版归档源，解决 Ubuntu 20.04 软件源下架问题
-RUN sed -i 's/archive.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list \
-    && sed -i 's/security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+# 清理所有第三方问题源（Chrome等）
+RUN rm -f /etc/apt/sources.list.d/*.list
+
+# 重写干净的Ubuntu旧版归档源，移除不存在的security仓库
+RUN echo "deb http://old-releases.ubuntu.com/ubuntu/ focal main restricted universe multiverse" > /etc/apt/sources.list \
+    && echo "deb http://old-releases.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse" >> /etc/apt/sources.list \
+    && echo "deb http://old-releases.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse" >> /etc/apt/sources.list
 
 # 安装运行依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
